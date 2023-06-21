@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}Fourier Series}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Sine-Cosine Form}{3}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Rule for derivatives}{5}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Rule for shift}{5}{subsubsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.2}Fourier Series Solution of Laplace's Equation}{5}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Heat Equation}{6}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Legendre Polynomials}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Definition by Construction as an Orthogonal System}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Definition via Generating Function}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Definition via Differential Equation}{8}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Chebyshev Polynomials}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Polynomial Interpolation}{9}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Spherical Harmonics}{9}{section.4}%
+\contentsline {section}{\numberline {5}Optical Depth}{11}{section.5}%
+\contentsline {section}{\numberline {6}Relationship with Attenuation}{12}{section.6}%
+\contentsline {section}{\numberline {7}Our Problem}{13}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Using Some Weird Formula...}{14}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Using Regression}{15}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Using Chebyshev Polynomials?}{15}{subsection.7.3}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
