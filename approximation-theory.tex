@@ -1,0 +1,489 @@
+\documentclass[12pt]{scrartcl}
+\usepackage[sexy]{james}
+\usepackage[noend]{algpseudocode}
+\usepackage{answers}
+\usepackage{array}
+\usepackage{tikz}
+\newenvironment{allintypewriter}{\ttfamily}{\par}
+\usepackage{listings}
+\usepackage{xcolor}
+\usetikzlibrary{arrows.meta}
+\usepackage{color}
+\usepackage{mathtools}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\E}{\mathbb{E}}
+\usetikzlibrary{arrows}
+\Newassociation{hint}{hintitem}{all-hints}
+\renewcommand{\solutionextension}{out}
+\renewenvironment{hintitem}[1]{\item[\bfseries #1.]}{}
+\renewcommand{\O}{\mathcal{O}}
+\declaretheorem[style=thmbluebox,name={Chinese Remainder Theorem}]{CRT}
+\renewcommand{\theCRT}{\Alph{CRT}}
+\setlength\parindent{0pt}
+\usepackage{sansmath}
+\usepackage{pgfplots}
+
+\usetikzlibrary{automata}
+\usetikzlibrary{positioning}  %                 ...positioning nodes
+\usetikzlibrary{arrows}       %                 ...customizing arrows
+\newcommand{\eqdef}{=\vcentcolon}
+\usepackage[top=3cm,left=3cm,right=3cm,bottom=3cm]{geometry}
+\newcommand{\mref}[3][red]{\hypersetup{linkcolor=#1}\cref{#2}{#3}\hypersetup{linkcolor=blue}}%<<<changed
+
+\tikzset{node distance=4.5cm, % Minimum distance between two nodes. Change if necessary.
+         every state/.style={ % Sets the properties for each state
+           semithick,
+           fill=cyan!40},
+         initial text={},     % No label on start arrow
+         double distance=4pt, % Adjust appearance of accept states
+         every edge/.style={  % Sets the properties for each transition
+         draw,
+           ->,>=stealth',     % Makes edges directed with bold arrowheads
+           auto,
+           semithick}}
+
+
+% Start of document.
+\newcommand{\sep}{\hspace*{.5em}}
+
+\begin{document}
+\title{Approximation Theory and Atmospheric Attenuation}
+\author{James Zhang\thanks{Email: \mailto{James.Zhang@ngc.com}}}
+\date{June 15, 2023}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\maketitle
+%\tableofcontents
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Fourier Series}
+
+\begin{definition}
+    A $\vocab{Fourier Series}$ is an expansion of a periodic function into a sum of trigonometric functions, where our basis functions are sine and cosine.
+\end{definition}
+
+\begin{note}
+    Smooth functions have Fourier series that converge to the original function, but Fourier series cannot approximate arbitrary functions, and most functions have infinitely many terms in their Fourier series, and the series does not always converge. As more terms are summed, the convergence of the Fourier series can be determined by focusing on the behavior of the partial sums.
+\end{note}
+
+\begin{note}
+    The coefficients of the Fourier series are determined by integrals of the function multiplied by the trigonometric functions.
+    They serve as weights or frequencies, essentially representing how much of sine and cosine are in the original function.
+\end{note}
+
+\begin{note}
+    A Fourier transform can be derived as the Fourier series of an aperiodic function.
+\end{note}
+
+\subsection{Sine-Cosine Form}
+
+\begin{note}
+    The key to finding the coefficients is  $\vocab{orthogonality}$, which is checked by ensuring for vectors that the dot product (inner product) is 0, but here we are dealing with functions not vectors.
+\[\int_{-\pi}^\pi (\cos nx)(\cos kx) dx = 0 = \int_{-\pi}^\pi (\sin nx)(\sin kx), n \neq k \]
+\[\int_{-\pi}^\pi (\cos nx)(\cos kx) dx = \pi = \int_{-\pi}^\pi (\sin nx)(\sin kx), n = k \]
+\[\int_{-\pi}^\pi (\cos nx)(\sin kx) dx = 0 , \ \forall \ n, k \in \RR\]
+\end{note}
+
+\begin{lemma}
+    Suppose we have a periodic function $s(x)$ with periodicity of $P$. Then the Fourier series coefficients are defined as 
+    \[A_0 = \frac{1}{P}\int_{-P/2}^{P/2}s(x) dx\]
+
+    Note that $A_0$ is the average value of the function $s(x)$.
+    
+    \[A_n = \frac{2}{P}\int_{-P/2}^{P/2} s(x) \cos(\frac{2\pi nx}{P}) dx \text{ for } n \geq 1\]
+    \[B_n = \frac{2}{P}\int_{-P/2}^{P/2} s(x) \sin(\frac{2\pi nx}{P}) dx \text{ for } n \geq 1\]
+    which leads to the the Fourier series as 
+    \[s(x) \approx A_0 + \sum_{n=1}^\infty A_n \cos(\frac{2\pi n x}{P}) + B_n \sin(\frac{2\pi n x}{P})\]. 
+\end{lemma}
+
+\begin{example}
+    Consider a sawtooth function such that 
+    \[s(x) = \frac{x}{\pi}, \text { for } -\pi < x < \pi\]
+    \[s(x + 2\pi k) = s(x), \text{ for } -\pi < x < \pi \text{ and } k \in \ZZ\]
+
+In this case, the Fourier coefficients are 
+\[A_n = \frac{2}{2\pi} = \int_{-\pi}^\pi s(x) \cos(nx) dx = 0, n \geq 0\] because cosine is an even function.
+\[B_n = \frac{1}{\pi}\int_{-\pi}^\pi s(x) \sin(nx) dx = -\frac{2}{\pi n}\cos(n\pi) + \frac{2}{\pi^2n^2}\sin(n\pi) = \frac{2(-1)^{n+1}}{\pi n}, n \geq 1\]
+by using integration by parts.
+
+The Fourier series converges to $s(x)$ at every point $x$ where $s$ is differentiable, and therefore 
+\[s(x) = A_0 + \sum_{n=1}^\infty B_n \sin(nx) = \frac{2}{\pi}\sum_{n=1}^\infty \frac{(-1)^{n+1}}{n}\sin(nx)\]
+\end{example}
+
+\begin{example}
+    Suppose we have the odd function
+    \begin{equation} f(x) = 
+        \begin{cases}
+            1, 0 \leq x < \pi \\
+            -1, \pi \leq x < 0
+        \end{cases}
+    \end{equation}
+Since this function is odd, we can are able to represent it as a weighted sum of sines because the integral of the odd function times the cosines which is an even function will just be 0. So we are left with
+\[b_k = \frac{2}{\pi}\int_0^\pi f(x) \sin(kx) dx = \frac{2}{\pi}(-\frac{\cos(kx)}{k})|_0^\pi\]
+\[b_1 = 2, b_2 = 0, b_3 = \frac{2}{3}, b_4 = 0, \cdots\]
+\[f(x) = \frac{4}{\pi}(\sin x + \frac{\sin 3x}{3} + \frac{\sin 5x}{5}+ \cdots)\]
+
+\end{example}
+
+\subsubsection{Rule for derivatives}
+Suppose we have a complex Fourier series
+\[f(x) = \sum_{-\infty}^\infty e^{ikx} \implies \frac{df}{dx} = \sum_{-\infty}^\infty ikc_ke^{ikx}\]
+
+\subsubsection{Rule for shift}
+\[f(x-d) = \sum (c_ke^{-ikd})e^{ikx}\]
+
+\subsection{Fourier Series Solution of Laplace's Equation}
+
+\begin{example}
+Suppose we are examining points inside a unit circle. The formula for approximating a function in polar coordinates using a Fourier series is 
+\[u(r, \theta) = \sum_{n=1}^\infty a_n r^n \cos n\theta + \sum_{n=1}^\infty b_nr^n\sin n \theta\]
+Suppose we have a point source of heat at the point $(1,0)$. Let us first substitute $r = 1$ in.
+\[u(1, \theta) = \sum_{n=0}^\infty a_n \cos n \theta + \sum_{n=1}^\infty b_n \sin n \theta\] which is a delta function. Note that a delta function is even, $f(-x) = f(x)$, which means we only have to consider the cosine terms.
+\[a_0 = \frac{1}{2\pi}\int_{-\pi}^\pi \delta(\theta) d \theta = \frac{1}{2\pi}\]
+\[a_n = \frac{1}{\pi}\int \delta(\theta) \cos n \theta d \theta = \frac{1}{\pi}\]
+\[u(r,\theta) = \frac{1}{2\pi}\sum_{n=1}^\infty \frac{r^n}{\pi}\cos n \theta\] models the heat in the whole circle.
+    
+\end{example}
+
+\subsection{Heat Equation}
+
+The heat equation is the following
+\[\frac{du}{dt} = \frac{d^2u}{dx^2}\] where $u(t, x)$ is a function of time and space. Recall that in solving systems of differential equations, solutions were $e^{\lambda t}v$ where $\lambda$ is the eigenvalue and $v$ is an eigenvector. Now, solutions are of the form 
+\[u(t,x) = e^{\lambda t}S(x)\] where $\lambda$ is an eigenvalue and $S(x)$ is an eigenfunction.
+
+Plugging in our general formula for $u(t,x)$ into the heat equation, we obtain
+\[\lambda e^{\lambda t}S = e^{\lambda t}\frac{d^2S}{dx^2}\]
+such that cancelling the $e^{\lambda t}$ terms yields
+the equation
+\[\lambda S = \frac{d^2S}{dx^2}\] which says that the second derivative of our function is equal to some number lambda times our function. If S is of the form $\sin k\pi x$, then taking the second derivative yields an eigenvalue $\lambda = -k^2\pi^2$ and so our general solution is 
+\[u(t,x) = \sum_{k=1}^\infty B_ke^{-k^2\pi^2}S_k\]
+
+\section{Legendre Polynomials}
+
+\begin{definition}
+    $\vocab{Legendre Polynoials}$ are a system of complete and orthogonal polynomials that have a vast number of mathematical properties and applications.
+\end{definition}
+
+\begin{definition}
+    An $\vocab{orthogonal polynomial sequence}$ is a family of polynomials such that any two different polynomials in the sequence are orthogonal to each other under some inner product.
+\end{definition}
+
+\subsection{Definition by Construction as an Orthogonal System}
+
+\begin{definition}
+    In this approach, polynomials are defined as an orthogonal system with respect to the weight function $w(x) = 1$ over $[-1, 1]$ where $P_n(x)$ is a polynomial of degree $n$ such that 
+    \[\int_{-1}^1 P_m(x)P_n(x) dx = 0, n \neq m\]
+\end{definition}
+
+\begin{definition}
+    
+\end{definition}
+
+\begin{note}
+    Suppose we have an additional standardization condition that $P_n(1) = 1$, then all polynomials can be determined.
+\end{note}
+
+\begin{lemma}
+    \[P_0(x) = 1\]
+is the only option for a polynomial of degree $0$.
+\[P_1(x) = x\] 
+To determine $P_n$, fix orthogonality to all $P_m$ with $m < n$ yields $n$ conditions and plus the standardization condition yields $n + 1$ conditions that fixes all $n + 1$ coefficients in $P_n(x)$.
+\end{lemma}
+
+\subsection{Definition via Generating Function}
+
+\subsection{Definition via Differential Equation}
+
+\section{Chebyshev Polynomials}
+
+\begin{definition}
+    The $\vocab{Chebyshev Polynomials}$ are two sequences of polynomials related the cosine and sine functions, notated as $T_n(x)$ and $U_n(x)$.
+
+\[T_n(\cos \theta) = \cos(n \theta)\]
+\[U_n(\cos\theta)\sin\theta = \sin((n+1)\theta)\]
+\end{definition}
+
+\begin{lemma}
+    These expressions define polynomials in $\cos \theta$ by rewriting trigonometric expressions using $\vocab{De Moivre's Formulas}$ or by repeatedly using $\vocab{angle sum formulas}$. For example
+    \[T_2(\cos \theta) = \cos(2\theta) = 2\cos^2\theta - 1 \implies T_2(x) = 2x^2 -1\]
+    \[U_1(\cos\theta)\sin\theta = \sin(2\theta) = 2\cos\theta\sin\theta \implies U_1(x) = 2x\]
+\end{lemma}
+
+\begin{definition}
+    $\vocab{De Moivre's Formula}$ is
+\[\cos n\theta + i\sin n\theta = (\cos \theta + i \sin \theta)^n\]
+\end{definition}
+
+\begin{note}
+    An important property of the $T_n(x)$ polynomials is that they are orthogonal with respect to the inner product
+    \[\langle f, g\rangle = \int_{-1}^1 f(x) g(x) \frac{dx}{\sqrt{1-x^2}}\]
+
+The $U_n(x)$ polynomials are orthogonal with respect to the inner product 
+    \[\langle f, g\rangle = \int_{-1}^1 f(x) g(x) \sqrt{1-x^2} dx\]
+\end{note}
+
+\begin{note}
+    Chebyshev polynomials are important in approximation theory because the roots of $T_n(x)$ which are called Chebyshev nodes are used as matching points for optimizing $\vocab{polynomial interpolation}$. The resulting interpolation polynomial provides an approximation that is close to the best polynomial approximation that is close to the best polynomial approximation to a continous funciton under the maximum norm, "minimax" criterion. 
+\end{note}
+
+\subsection{Polynomial Interpolation}
+
+\begin{definition}
+    In the field of numerical analysis, $\vocab{interpolation}$ is the estimation method of constructing new data points from a discrete set of data points. 
+\end{definition}
+
+\begin{definition}
+    $\vocab{Polynomial Interpolation}$ is the interpolation of a given data set by the polynomial of lowest possible degree that passes through the points of the data set.
+
+Given a set of $n+1$ data points $(x_0, y_0) \cdots , (x_n, y_n)$, a polynomial $p(x)$ is said to interpolate the data if $p(x_j) = y_j \ \forall \ j \in \{0, 1, \cdots , n\}$. 
+\end{definition}
+
+\begin{theorem}
+    Interpolation Theorem: $\exists \ $ a unique polynomial of degree at most $n$ that interpolates the $n+1$ data points $(x_0, y_0), \cdots, (x_n, y_n) \in \RR^2$ where no two $x_i \neq x_j \ \forall \ i, j \in \{0, \cdots, n\} \text{ and } i \neq j$.
+\end{theorem}
+
+\begin{lemma}
+    $T_n(x)$ polynomials can be obtained from the recurrence relation 
+\[T_0(x) = 1, T_1(x) = x\]
+\[T_{n+1}(x) = 2xT_n(x) - T_{n-1}(x)\]
+which can be expressed as the determinant of a tridiagonal $k \times k$ matrix of the form
+\[\det\begin{pmatrix}
+    x && 1 && 0 && \hdots && 0\\
+    1 && 2x && 1 && \hdots && 0\\
+    0 && 1 && 2x && \ddots && \vdots\\
+    \vdots && \vdots && \ddots && \ddots && 1\\
+    0 && 0 && \hdots && 1 && 2x
+\end{pmatrix}\]
+\end{lemma}
+
+\begin{lemma}
+    The $U_n(x)$ polynomials are expressed similarly recursively but 
+\[U_0(x) = 1, U_1(x) = 2x\]
+\[U_{n+1}(x) = 2x U_n(x) - U_{n-1}(x)\]
+\end{lemma}
+
+\section{Spherical Harmonics}
+
+\begin{definition}
+    A $\vocab{Harmonic function}$ is a function where the Laplacian (the divergence of the gradient)
+    \[\nabla \cdot \nabla f(x,y) \equiv 0\]
+    at all points. This is a statement about the function.
+\end{definition}
+
+\begin{note}
+    Suppose $f$ is a univariate function such that the second derivative (an analog to the Laplacian) is equal to 0. Integrating twice, we find that any linear function $f(x) = cx + k, \ c, k \in \RR$ satisfies this statement.
+\end{note}
+
+\begin{note}
+    For a multivariate harmonic function, say $f(x,y)$ then 
+\[\nabla^2f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f }{\partial y^2} \equiv 0\]
+\end{note}
+
+\begin{example}
+    The multivariate function $f(x,y) = e^x \sin(y)$ is a harmonic function and let us show this.
+\[\frac{\partial^2 f}{\partial x^2} = e^x\sin(y)\]
+\[\frac{\partial^2 f}{\partial y^2} = -e^x\sin(y)\]
+such that their sum is always equal to 0 regardless of values of $x$ and $y$.
+\end{example}
+
+\begin{note}
+    Here's some intuition behind the Laplacian. If you take a Laplacian of your function at some point, and $\delta f > 0$, this implies that on average, all neighbors around your point are greater than that point (a local minimum in a sense), and a similar argument applies for $\delta f < 0$. The special thing about harmonic functions is that at all points, on average, the value of the circle of neighbors are the same as that point. 
+
+    Whenever you're relating neighbors to the original point, the Laplacian comes in, and harmomic functions represent a sense of stability.
+\end{note}
+
+\begin{definition}
+    $\vocab{Spherical harmonics}$ are special functions defined on the surface of a sphere, often used to solve partial differential equations.
+\end{definition}
+
+\begin{definition}
+    $\vocab{Spherical coordinates}$ are the following
+\begin{enumerate}
+    \item $\rho$ - the distance from origin to the point
+    \item $\theta$ - same as in polar coordinates
+    \item $\phi$ - the angle that $\rho$ makes with the positive z-axis
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}
+    Spherical harmonics originate from solving $\vocab{Laplace's Equation}$ in the spherical domain. Laplace's Equation is the following
+\[\nabla^2 f = 0\] where $\nabla$ is the gradient operator, $\nabla^2$ is known as the Laplace operator, and $f(x,y,z)$ is a twice-differentiable real-value function.
+
+In Cartesian coordinates,
+\[\nabla^2f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f }{\partial y^2} + \frac{\partial^2 f}{\partial z^2}\]
+and in spherical coordinates,
+\[\nabla^2f = \frac{1}{r^2}\frac{\partial}{\partial r}(r^2 \frac{\partial f}{\partial r}) + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}(\sin \theta \frac{\partial f}{\partial \theta}) + \frac{1}{r^2\sin^2\theta}\frac{\partial^2 f}{\partial \phi^2}) = 0\]
+\end{lemma}
+
+\begin{lemma}
+    Let's find solutions of the form $f(r, \theta, \phi = R(r)Y(\theta, \phi)$. By separation of variables,
+    \[\frac{1}{R}\frac{d}{dr}(r^2\frac{dR}{dr}) = \lambda\]
+    \[\frac{1}{Y}\frac{1}{\sin\theta}\frac{\partial}{\partial \theta}(\sin \theta \frac{\partial Y}{\partial \theta} + \frac{1}{Y}\frac{1}{\sin^2\theta}\frac{\partial^2 Y}{\partial \phi^2}) = -\lambda\]
+Applying separation of variables once more but this time of the form $Y(\theta, \phi) = \Theta(\theta)\Phi(\phi)$ yields
+\[\frac{1}{\Phi}\frac{d^2\Phi}{d\phi^2} = -m^2\]
+\[\lambda\sin^2\theta + \frac{\sin \theta}{\Theta}\frac{d}{d\theta}(\sin \theta \frac{d\Theta}{d\theta}) = m^2\]
+for some $m \in \CC$.
+\end{lemma}
+
+\begin{note}
+    Spherical harmonics form a complete set of orthogonal functions, thus an orthonormal basis, so each function defined on the surface of a sphere can be written as a weighted sum of these spherical harmonics.
+\end{note}
+
+\begin{note}
+    This idea is similar to Fourier series where periodic functions can be expressed as weighted sum of sines and cosines.
+\end{note}
+
+\section{Optical Depth}
+
+\begin{definition}
+    In physics, \vocab{optical depth or thickness}, usually denoted by $\tau$, is the natural log of the ratio of incident to transmitted radiant power through a material.
+\[\tau = \ln\left(\frac{\Phi^i_e}{\Phi^t_e}\right) = -\ln T\]
+where 
+\begin{itemize}
+    \item $\Phi_e^i$ is the initial radiant flux received by that material
+    \item $\Phi_e^t$ is the final radiant flux transmitted by that material
+    \item $T$ is the transmittance of that material
+\end{itemize}
+\end{definition}
+
+\begin{note}
+    The larger the optical depth, the smaller the amount of transmitted radiant power through the material.
+\end{note}
+
+\begin{note}
+    Optical depth is dimensionless. The graph of optical length is a monotonic  function of optical path length. As path length $\to$ 0, $\tau \to 0$.
+\end{note}
+
+\section{Relationship with Attenuation}
+
+\begin{definition}
+    Optical depth measures the $\vocab{attentuation}$ of the transmitted radiant power in a material. Attenuation can be caused by absorption, reflection, and scattering.
+\end{definition}
+
+\begin{lemma}
+\[\Phi_t + \Phi_a = \Phi_i + \Phi_e\]
+\[\text{T + ATT = 1 + E}\]
+where
+\begin{itemize}
+    \item $\Phi_t$ is the radiant power transmitted by that material
+    \item $\Phi_a$ is the radiant power attenuated by that material
+    \item $\Phi_i$ is the radiant power received by that material
+    \item $\Phi_e$ is the radient power emitted by that material
+    \item T $= \frac{\Phi_t}{\Phi_i}$ is the transmittance of that material
+    \item ATT = $\frac{\Phi_a}{\Phi_i}$ attenuatation of that material
+    \item E = $\frac{\Phi_e}{\Phi_i}$ is the emittance of that material.
+\end{itemize}
+Note that the second equation is obtained from the first by dividing every term by $\Phi_i$.
+\end{lemma}
+
+\begin{definition}
+    According to the $\vocab{Beer-Lambert Law}$
+\[T = e^{-\tau}\]
+where $T$ = transmittance and $\tau$ is the optical thickness.
+\end{definition}
+
+\section{Our Problem}
+
+We seek total transmission which we denote as $T_{total} = \frac{I_f}{I_0}$ such that $T_{total} \in (0, 1)$. We began by modeling the initial initial problem as 
+\[I_f = I_0e^{-L/\alpha}\]
+where $L$ is the length of the path and $\alpha$ (I BELIEVE) was the attenuation coefficient. Let us simplify the above expression.
+\[\frac{I_f}{I_0} = e^{-L/\alpha}\]
+\[\ln(\frac{I_f}{I_0}) = -\frac{L}{\alpha}\]
+\[\frac{L}{\alpha} = \ln(\frac{I_0}{I_f})\]
+Note that $I_0 = \Phi_i$ and $I_f = \Phi_t$. I believe these are the same, let us make this substitution.
+\[\frac{L}{\alpha} = \ln(\frac{\Phi_i}{\Phi_f})\]
+Now recall from the definition of optical thickness, $\tau = \ln(\frac{\Phi_i}{\Phi_f})$. Therefore, 
+\[\frac{L}{\alpha} = \ln(\frac{\Phi_i}{\Phi_f}) = \tau\]
+However, there exists the below relationship between optical thickness and attenuation coefficient.
+\[\tau = \int_0^L\alpha(z) \text{d}z\]
+where 
+\begin{itemize}
+    \item $L$ is the thickness of that material through which the light or power travels.
+    \item $\alpha(z)$ is the attenuation coefficient of that material at position $z$.
+\end{itemize}
+If $\alpha(z)$ is uniform along the path, however, then the attenuatation is linear and the relationship becomes $\tau = \alpha L$.
+
+Thus, we reach a contradiction because 
+\[\frac{L}{\alpha} = \ln(\frac{\Phi_i}{\Phi_f}) = \tau = \alpha L\]
+which is not always possible. Therefore, I think the initial problem should have been modeled as \[I_f = I_0e^{-L\alpha}\]
+and this is consistent with Beer Lambert's Equation which is 
+\[I_f = I_0\exp(-\int_0^r \alpha(r')\text{d}r)\]
+this is consistent with what we seek which recall is 
+\[T_{total} = \frac{I_f}{I_0} = e^{-L\alpha}\]
+Obviously, the atmosphere is not uniform, so we will take the steps towards calculus as before, which is independent of whether or not $\alpha$ or $\beta = \frac{1}{\alpha}$ is being integrated. This can be clarified later.
+\[T_{total} = \frac{I_f}{I_0} = \exp({-\Delta L \sum \alpha_i})\]
+As $\Delta L \to 0$,
+\[T_{total} = \frac{I_f}{I_0} = \exp(-\int_0^L \alpha(x) \text{d}x)\]
+The main problem is that it is not feasible to be able to determine the attenuation coefficient of the atmosphere of any point in the world in real time, so we must be able to
+\begin{enumerate}
+\item solve for $T_{total}$ another way
+\item or approximate this path integral.
+\item it would also be interesting to try to approximate the attenuation coefficient given some weather data + latitude, longitude, altitude, but getting that data in real time could be difficult. There are already a few existing models that try to approximate attenuation coefficient for lidar, not sure if applicable.
+\begin{itemize}
+    \item Kim Kruse Model (Clear Air)
+    \item Al Naboulsi Fog Model (Foggy)
+    \item Carbonneau Model (Rain)
+    
+\end{itemize}
+\end{enumerate}
+
+\subsection{Using Some Weird Formula...}
+
+I came across the following formula on the Wikipedia page for Optical Depth in the Applications of Atmospheric Sciences section.
+\[T = e^{-\tau} = e^{-mr'}\]
+where 
+\begin{itemize}
+    \item $m$ is called the $\vocab{relative airmass}$ and is determined as $m = \sec(\theta)$ and $\theta$ is the zenith angle.
+    \item $r'$ "refers to the vertical path"
+\end{itemize}
+Since we model the problem as 
+\[T = e^{-L\alpha}\] and $\tau = L\alpha \implies T = e^{-\tau}$ checks out. While this does seem like a dramatic over simplification of the problem, it would be interesting to check out further because it does express transmittance as an expression of zenith angle and altitude.
+
+\subsection{Using Regression}
+
+The idea of approximating this exponential function as a weighted sum of other exponential functions is actually a pretty good one. We will attempt to approximate the path integral $\int_0^L \alpha(x) \text{d}x$. Recall that last time we wrote
+\[\exp (-\int_0^L \alpha(x) \text{d}x) = c_1\exp(\frac{alt}{1 \ km}) + \cdots + c_n\exp(\frac{alt}{k \ km}) + b\]
+where $k, b\in \RR$. It could be 100 km, the max altitude where no more attenuation occurs. Note that this is in the form
+$T_{total} = \vec{w} \cdot \vec{x} + b$
+\begin{itemize}
+    \item $\vec{w} = \{c_1, \cdots, c_n\}$ and is of shape $(1,n)$.
+    \item $\vec{x} = \{\exp(\frac{alt}{1 \ km}), \cdots, \exp(\frac{alt}{k \ km})\}$ and is of shape $(1,n)$.
+    \item $b$ is a scalar bias.
+\end{itemize}
+In the training process, after each calculation of a path, use a cost function such as Least Squares and compare the predicted transmission with the actual transmission and minimize it with gradient descent. Ideally, we don't want $n$ to be too large. Additional knowledge of atmospheric science and water vapor or even just lots of testing can help us determine the optimal $n$ and thus the optimal intervals. To improve the idea behind this model, we should incorporate either the zenith angle or latitude and longitude features.
+
+At the moment, since we only consider altitude, the model would make most sense when the satellite is directly above the sensor. If the satellite is slanted, then the path is longer. Let the path be denoted as $p$ and the altitude as $a$.
+\[\cos\theta = \frac{a}{p} \implies p = a\sec\theta\]
+and this is the formula above derived, essentially it just elongates the altitude to represent path. 
+Thus, the final univariate altitude model could be something like
+\[\exp (-\int_0^L \alpha(x) \text{d}x) = a \sec\theta (c_1\exp(\frac{a}{1 \ km}) + \cdots + c_n\exp(\frac{a}{k \ km})) + b\]
+Extending this to include latitude and longitude would turn $\vec{w}$ and $\vec{x}$ into vectors of shape $(3, n)$.
+
+\subsection{Using Chebyshev Polynomials?}
+
+\end{document}
